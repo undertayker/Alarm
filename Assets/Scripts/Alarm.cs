@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
@@ -17,18 +18,25 @@ public class Alarm : MonoBehaviour
         _audioSource.volume = _minVolume;
     }
 
-    private void Update()
-    {
-        _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, _targetVolume, _fadeSpeed * Time.deltaTime);
-    }
-
     public void AssignMaxValue()
     {
         _targetVolume = _maxVolume;
+        StartCoroutine(VolumeChanger());
     }
 
     public void AssignMinValue()
     {
         _targetVolume = _minVolume;
+        StartCoroutine(VolumeChanger());
+    }
+
+    private IEnumerator VolumeChanger()
+    {
+        while (_audioSource.volume != _targetVolume)
+        {
+            _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, _targetVolume, _fadeSpeed * Time.deltaTime);
+
+            yield return null;
+        }
     }
 }
