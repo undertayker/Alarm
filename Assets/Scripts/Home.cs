@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Door : MonoBehaviour
+public class Home : MonoBehaviour
 {
     [SerializeField] private Alarm _alarm ;
 

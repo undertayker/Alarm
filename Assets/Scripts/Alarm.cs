@@ -6,6 +6,8 @@ public class Alarm : MonoBehaviour
 {
     [SerializeField] private AudioSource _audioSource;
 
+    private Coroutine _volumeChanger;
+
     private float _maxVolume = 1f;
     private float _minVolume = 0f;
     private float _fadeSpeed = 0.5f;
@@ -21,22 +23,42 @@ public class Alarm : MonoBehaviour
     public void AssignMaxValue()
     {
         _targetVolume = _maxVolume;
-        StartCoroutine(VolumeChanger());
+        StartVolumeChange();
     }
 
     public void AssignMinValue()
     {
         _targetVolume = _minVolume;
-        StartCoroutine(VolumeChanger());
+        StartVolumeChange();
+    }
+
+    private void StartVolumeChange()
+    {
+        if (_volumeChanger != null)
+        {
+            StopCoroutine(VolumeChanger());
+        }
+
+        _volumeChanger = StartCoroutine(VolumeChanger());
     }
 
     private IEnumerator VolumeChanger()
     {
+        if (_audioSource.volume == _minVolume)
+        {
+            _audioSource.Play();
+        }
+
         while (_audioSource.volume != _targetVolume)
         {
             _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, _targetVolume, _fadeSpeed * Time.deltaTime);
 
             yield return null;
+        }
+
+        if (_audioSource.volume == _minVolume)
+        {
+            _audioSource.Stop();
         }
     }
 }
